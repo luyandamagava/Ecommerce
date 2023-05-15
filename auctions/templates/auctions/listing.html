@@ -1,0 +1,85 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+
+
+
+
+    <h1>{{ title }}</h1>
+
+
+
+
+    <ul class="list-group">
+        <li class="list-group-item"><h5>Description: </h5>{{ description }}</li>
+        <li class="list-group-item"><h4>Current Bid - ${{ startingBid }}</h4></li>
+    </ul>
+
+
+
+    {% if user.is_authenticated %}
+        <br>
+        
+            
+            
+            {% if currentListing in listings %}
+                <form action="{% url 'removeFromWatchlist' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
+                    <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
+                    <button class="btn btn-primary">Remove from Watchlist</button>
+                </form>
+            {% else %}
+                <form action="{% url 'addToWatchList' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
+                    <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
+                    <button class="btn btn-primary">Add To Watchlist</button>
+                </form>
+            {% endif %}
+            
+        
+
+
+        <form action=" {% url 'newBid' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <br/>
+                <label><h5>Enter Bid:</h5></label>
+                <input type="hidden" id="listingID" name="listingID" value="{{ ID }}">
+                <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
+                <input class="form-control" name="enterBid" type="text" placeholder="{{ startingBid }}"/>
+            </div>
+            {% for message in messages %}
+                <div class="container-fluid p-0">
+                <div class="alert {{ message.tags }} alert-danger" role="alert" >
+                    </button>
+                    <h3>{{ message }}</h3>
+                </div>
+                </div>
+            {% endfor %}
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </form>
+
+        
+    {% endif %}
+    <br>
+    <h4>Details</h4>
+    <ul>
+        <li>Listed by: {{ creater }} </li>
+        <li>Category:  </li>
+
+    </ul>
+
+    
+    <form action="{% url 'deleteEntry' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
+        <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
+        {% if user.is_authenticated %}
+            <button class="btn btn-danger"> Delete Listing</button>
+        {% endif %}
+        
+    </form>
+
+{% endblock  %}

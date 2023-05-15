@@ -1,0 +1,16 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+
+<ul class="list-group">
+    {% for item in watchlistItems %}
+    <h1>{{ item.title }}</h1>
+        <li class="list-group-item"><h5>Description: </h5>{{ item.description }}</li>
+        <li class="list-group-item"><h4>Current Bid - ${{ item.startingBid }}</h4></li>
+    {% empty %}
+        <li><h1>Your watchlist is empty </h1></li>
+    {% endfor %}
+    
+</ul>
+
+{% endblock body %}
