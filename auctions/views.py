@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
 from .models import Listings
@@ -74,10 +74,9 @@ def newListing(request):
     if request.method == "POST":
 
         if request.POST["listTitle"] == '' or request.POST["listDesc"] == '' or request.POST["listBid"] == '':
-            messages.error(request, 'You did not enter a value')
-            return newListingPage(request) 
-        
-        
+            messages.error(request, 'You did not enter a value', extra_tags="all")
+            return redirect(reverse('newListingPage')) 
+            
 
         lTitle = request.POST["listTitle"]
         lDescription = request.POST["listDesc"]
@@ -87,7 +86,7 @@ def newListing(request):
         newList = Listings(title=lTitle, description=lDescription, startingBid=lStartingBid, creater=userID)
         newList.save()
 
-        return render(request, "auctions/index.html")
+        return index(request)
 
 def listing(request):
     if request.method == "POST":
@@ -122,6 +121,8 @@ def listing(request):
                 "creater": currentListing.creater
                 
             })
+        
+   
 
 def addToWatchList(request):
     if request.method == "POST":
