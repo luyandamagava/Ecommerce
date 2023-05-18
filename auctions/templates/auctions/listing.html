@@ -53,12 +53,13 @@
             {% for message in messages %}
                 <div class="container-fluid p-0">
                 <div class="alert {{ message.tags }} alert-danger" role="alert" >
-                    </button>
                     <h3>{{ message }}</h3>
                 </div>
                 </div>
             {% endfor %}
+           
             <button class="btn btn-primary" type="submit">Submit</button>
+            
         </form>
 
         
@@ -66,8 +67,8 @@
     <br>
     <h4>Details</h4>
     <ul>
-        <li>Listed by: {{ creater }} </li>
-        <li>Category:  </li>
+        <li>Listed by : {{ creater }} </li>
+        <li>Category :  {{ category }}</li>
 
     </ul>
 
@@ -76,8 +77,8 @@
         {% csrf_token %}
         <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
         <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
-        {% if user.is_authenticated %}
-            <button class="btn btn-danger"> Delete Listing</button>
+        {% if user.is_authenticated and user.id == creater.id %}
+            <button class="btn btn-danger"> Delete Listing </button>
         {% endif %}
         
     </form>

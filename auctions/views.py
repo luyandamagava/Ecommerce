@@ -82,8 +82,9 @@ def newListing(request):
         lDescription = request.POST["listDesc"]
         lStartingBid = int(request.POST["listBid"])
         userID = User.objects.get(id=int(request.POST["UserID"]))
+        newCategory= request.POST["category"]
 
-        newList = Listings(title=lTitle, description=lDescription, startingBid=lStartingBid, creater=userID)
+        newList = Listings(title=lTitle, description=lDescription, startingBid=lStartingBid, creater=userID, category=newCategory)
         newList.save()
 
         return index(request)
@@ -101,7 +102,8 @@ def listing(request):
             "startingBid": currentListing.startingBid,
             "ID": listing_id,
             "currentListing": currentListing,
-            "creater": currentListing.creater
+            "creater": currentListing.creater,
+            "category": currentListing.category
             
         })
 
@@ -118,7 +120,8 @@ def listing(request):
                 "ID": listing_id,
                 "listings": watchListItems,
                 "currentListing": currentListing,
-                "creater": currentListing.creater
+                "creater": currentListing.creater,
+                "category": currentListing.category
                 
             })
         
@@ -159,8 +162,6 @@ def newBid(request):
     if request.method == "POST" and request.POST["enterBid"]!= '':
         listing_id = int(request.POST["listingID"])
         listings = Listings.objects.get(id=listing_id)
-        
-
         newValue = int(request.POST["enterBid"])
 
         if newValue <= listings.startingBid:

@@ -16,28 +16,29 @@
     <h1>New Listings</h1>
     <form action="{% url 'newListing' %}" method="post">
         {% csrf_token %}
+
         <div class="form-group">
             <label>Title</label>
             <input class="form-control" name="listTitle" type="text"/>
-            <br>
-           
-            
+            <br>  
         </div>
+
         <div class="form-group">
             <label>Description</label>
             <textarea class="form-control" name="listDesc" rows="5"></textarea>
             <br>
-
-            
-
-            
         </div>
+
         <div class="form-group">
             <label>Starting Bid</label>
             <input class="form-control" name="listBid" type="text"/>
             <br>
-            
-            
+        </div>
+
+        <div class="form-group">
+            <label>Category</label>
+            <input class="form-control" name="category" type="text"/>
+            <br>
         </div>
         
         <button class="btn btn-primary" type="submit">Submit</button>
