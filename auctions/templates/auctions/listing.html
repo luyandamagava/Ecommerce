@@ -5,8 +5,14 @@
 
 
 
-    <h1>{{ title }}</h1>
+    <h1 class="text-center">{{ title }}</h1>
 
+    <dl>
+        <dt>Listed by :</dt>
+        <dd>{{ creater }}</dd>
+        <dt>Category :</dt>
+        <dd>{{ category }}</dd>
+    </dl>
 
 
 
@@ -19,9 +25,19 @@
 
     {% if user.is_authenticated %}
         <br>
-        
+
+        <form action="{% url 'deleteEntry' %}" method="post">
+            {% csrf_token %}
+            <div class="col-md-12 text-right">
+                <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
+                <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
+                {% if user.is_authenticated and user.id == creater.id %}
+                    <button class="btn btn-danger float-right"> Delete Listing </button>
+                {% endif %}
+            </div>
             
-            
+        </form>
+
             {% if currentListing in listings %}
                 <form action="{% url 'removeFromWatchlist' %}" method="post">
                     {% csrf_token %}
@@ -60,27 +76,31 @@
            
             <button class="btn btn-primary" type="submit">Submit</button>
             
-        </form>
-
-        
+        </form> 
     {% endif %}
     <br>
-    <h4>Details</h4>
-    <ul>
-        <li>Listed by : {{ creater }} </li>
-        <li>Category :  {{ category }}</li>
-
-    </ul>
 
     
-    <form action="{% url 'deleteEntry' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
-        <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
-        {% if user.is_authenticated and user.id == creater.id %}
-            <button class="btn btn-danger"> Delete Listing </button>
-        {% endif %}
-        
-    </form>
+    
+    
+    <br>
+        <form action="{% url 'add_comment' %}" method="post">
+            {% csrf_token %}
+            <h2 class="text-center"> Add Commment </h2>
+            <div class="form-group">
+                <input class="form-control" type="text" id="comment" name="comment">
+                <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
+                <input type="hidden" id="listingID" name="listingID" value="{{ ID }}">  
+            </div>
+            <button class="btn btn-primary lrg" type="submit">Submit</button>
+        </form>
+        <br>
+
+        <ul class="list-group">
+            {% for comment in comments %}
+                <h3>Comments</h3>
+                <li class="list-group-item">{{ comment.creater }} - {{ comment.comment }}<li>
+            {% endfor %}
+        </ul>
 
 {% endblock  %}

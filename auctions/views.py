@@ -4,8 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
-from .models import Listings
-
+from .models import Listings, comments
 from .models import User
 
 
@@ -110,6 +109,7 @@ def listing(request):
         else:
             user = User.objects.get(id=userID)
             watchListItems = user.watchlistItem.all()
+            allComments = currentListing.allComments.all()
             
         
     
@@ -121,7 +121,8 @@ def listing(request):
                 "listings": watchListItems,
                 "currentListing": currentListing,
                 "creater": currentListing.creater,
-                "category": currentListing.category
+                "category": currentListing.category,
+                "comments": allComments
                 
             })
         
@@ -184,6 +185,20 @@ def deleteEntry(request):
 
     return index(request)
 
+def add_comment(request):
+    if request.method == "POST":
+        listing_id = int(request.POST["listingID"])
+        userID = int(request.POST["userID"])
+        listings = Listings.objects.get(id=listing_id)
+        user = User.objects.get(id=userID)
+        comment_made = request.POST["comment"]
+
+        comm = comments(creater=user, comment=comment_made)
+        comm.save()
+
+        listings.allComments.add(comm)
+        return index(request)
 
 
 
+    
