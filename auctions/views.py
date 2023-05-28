@@ -166,7 +166,7 @@ def newBid(request):
         newValue = int(request.POST["enterBid"])
 
         if newValue <= listings.startingBid:
-            messages.error(request, 'The value entered must be greater than current bid')
+            messages.error(request, 'The value entered must be greater than current bid', extra_tags='low_bid')
             return listing(request)
         
         listings.startingBid = newValue
@@ -174,30 +174,36 @@ def newBid(request):
 
         return listing(request)
     
-    messages.error(request, 'Please enter a value')
+    messages.error(request, 'Please enter a value', extra_tags='no_new_bid')
     return listing(request)
 
 def deleteEntry(request):
+
     listing_id = int(request.POST["listingID"])
     listings = Listings.objects.get(id=listing_id)
-
     listings.delete()
 
     return index(request)
 
 def add_comment(request):
-    if request.method == "POST":
+    if request.method == "POST" and request.POST["comment"] != '':
+        
         listing_id = int(request.POST["listingID"])
-        userID = int(request.POST["userID"])
         listings = Listings.objects.get(id=listing_id)
-        user = User.objects.get(id=userID)
-        comment_made = request.POST["comment"]
 
+        userID = int(request.POST["userID"])
+        user = User.objects.get(id=userID)
+
+        comment_made = request.POST["comment"]
         comm = comments(creater=user, comment=comment_made)
         comm.save()
 
         listings.allComments.add(comm)
         return index(request)
+    
+    else:
+        messages.error(request, "You did not enter a comment in the comment bar", extra_tags='no_comment')
+        return listing(request)
 
 
 

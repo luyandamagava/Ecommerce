@@ -67,11 +67,14 @@
                 <input class="form-control" name="enterBid" type="text" placeholder="{{ startingBid }}"/>
             </div>
             {% for message in messages %}
-                <div class="container-fluid p-0">
-                <div class="alert {{ message.tags }} alert-danger" role="alert" >
-                    <h3>{{ message }}</h3>
-                </div>
-                </div>
+                {% if 'no_new_bid' or 'low_bid' in message.extra_tags %}
+                    <div class="container-fluid p-0">
+                    <div class="alert {{ message.tags }} alert-danger" role="alert" >
+                        <h3>{{ message }}</h3>
+                    </div>
+                    </div>
+                {% endif %}
+               
             {% endfor %}
            
             <button class="btn btn-primary" type="submit">Submit</button>
@@ -94,11 +97,22 @@
             </div>
             <button class="btn btn-primary lrg" type="submit">Submit</button>
         </form>
+
+        {% for message in messages %}
+          {% if 'no_comment' in message.extra_tags %}
+          <br>
+                <div class="container-fluid p-0">
+                <div class="alert {{ message.tags }} alert-danger" role="alert" >
+                    <h3>{{ message }}</h3>
+                </div>
+                </div>
+            {% endif %}
+        {% endfor %}
         <br>
 
         <ul class="list-group">
+            <h3>Comments</h3>
             {% for comment in comments %}
-                <h3>Comments</h3>
                 <li class="list-group-item">{{ comment.creater }} - {{ comment.comment }}<li>
             {% endfor %}
         </ul>
