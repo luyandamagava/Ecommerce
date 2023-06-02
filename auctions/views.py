@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
-from .models import Listings, comments
+from .models import Listings, comments, category
 from .models import User
 
 
@@ -81,9 +81,24 @@ def newListing(request):
         lDescription = request.POST["listDesc"]
         lStartingBid = int(request.POST["listBid"])
         userID = User.objects.get(id=int(request.POST["UserID"]))
-        newCategory= request.POST["category"]
+        new_category = request.POST["category"]
+        all_categories = category.objects.all()
+        new_category_object = ""
+        categories_list = []
 
-        newList = Listings(title=lTitle, description=lDescription, startingBid=lStartingBid, creater=userID, category=newCategory)
+        for new_list in all_categories:
+            categories_list.append(new_list.name)
+
+        if new_category in categories_list:
+            new_category_object = category.objects.get(name=new_category)
+
+        else:
+            new_category_object = category(name=new_category)
+            new_category_object.save()
+        
+
+
+        newList = Listings(title=lTitle, description=lDescription, startingBid=lStartingBid, creater=userID, category=new_category_object)
         newList.save()
 
         return index(request)
@@ -93,6 +108,7 @@ def listing(request):
         listing_id = int(request.POST["listingID"])
         userID = request.POST["userID"]
         currentListing = Listings.objects.get(id=listing_id)
+        allComments = currentListing.allComments.all()
 
         if userID == 'None':
             return render(request, "auctions/listing.html", {
@@ -102,14 +118,15 @@ def listing(request):
             "ID": listing_id,
             "currentListing": currentListing,
             "creater": currentListing.creater,
-            "category": currentListing.category
+            "category": currentListing.category,
+            "comments": allComments
             
         })
 
         else:
             user = User.objects.get(id=userID)
             watchListItems = user.watchlistItem.all()
-            allComments = currentListing.allComments.all()
+            
             
         
     
@@ -206,5 +223,10 @@ def add_comment(request):
         return listing(request)
 
 
+def display_categorys(request):
+    categorys = category.objects.all()
 
+    return render(request, "auctions/categorys.html", {
+        "categorys": categorys
+    })
     

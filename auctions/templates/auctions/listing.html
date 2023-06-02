@@ -11,7 +11,7 @@
         <dt>Listed by :</dt>
         <dd>{{ creater }}</dd>
         <dt>Category :</dt>
-        <dd>{{ category }}</dd>
+        <dd>{{ category.name }}</dd>
     </dl>
 
 
@@ -87,33 +87,38 @@
     
     
     <br>
-        <form action="{% url 'add_comment' %}" method="post">
-            {% csrf_token %}
-            <h2 class="text-center"> Add Commment </h2>
-            <div class="form-group">
-                <input class="form-control" type="text" id="comment" name="comment">
-                <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
-                <input type="hidden" id="listingID" name="listingID" value="{{ ID }}">  
-            </div>
-            <button class="btn btn-primary lrg" type="submit">Submit</button>
-        </form>
+        {% if user.is_authenticated %}
+            <form action="{% url 'add_comment' %}" method="post">
+                {% csrf_token %}
+                <h2 class="text-center"> Add Commment </h2>
+                <div class="form-group">
+                    <input class="form-control" type="text" id="comment" name="comment">
+                    <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
+                    <input type="hidden" id="listingID" name="listingID" value="{{ ID }}">  
+                </div>
+                <button class="btn btn-primary lrg" type="submit">Submit</button>
+            </form>
 
-        {% for message in messages %}
-          {% if 'no_comment' in message.extra_tags %}
-          <br>
-                <div class="container-fluid p-0">
-                <div class="alert {{ message.tags }} alert-danger" role="alert" >
-                    <h3>{{ message }}</h3>
-                </div>
-                </div>
-            {% endif %}
-        {% endfor %}
-        <br>
+            {% for message in messages %}
+            {% if 'no_comment' in message.extra_tags %}
+            <br>
+                    <div class="container-fluid p-0">
+                    <div class="alert {{ message.tags }} alert-danger" role="alert" >
+                        <h3>{{ message }}</h3>
+                    </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <br>
+        {% endif %}
 
         <ul class="list-group">
             <h3>Comments</h3>
             {% for comment in comments %}
                 <li class="list-group-item">{{ comment.creater }} - {{ comment.comment }}<li>
+
+            {% empty%}
+                <li><h5>There are no comments</h5></li>
             {% endfor %}
         </ul>
 

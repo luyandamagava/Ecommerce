@@ -5,6 +5,9 @@ from django.db import models
 class User(AbstractUser):
     pass
 
+class category(models.Model):
+    name = models.CharField(max_length=264)
+
 class Listings(models.Model):
 
     title = models.CharField(max_length=64)
@@ -12,8 +15,7 @@ class Listings(models.Model):
     startingBid = models.IntegerField()
     watchlist = models.ManyToManyField(User, blank=True, related_name='watchlistItem')
     creater = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_listings', default=0)
-    category = models.CharField(max_length=64, default=None)
-    
+    category = models.ForeignKey(category, on_delete=models.CASCADE, related_name="add_to_category", default="")    
 
     def __str__(self):
         return f"{self.id} Listing Title: {self.title} Description: {self.description} Current Bid: {self.currentBid}"
@@ -31,6 +33,10 @@ class comments(models.Model):
 
     def __str__(self):
         return f"Username: {self.creater} \n Comment: {self.comment}"
+    
+
+
+
 
 
   
