@@ -8,6 +8,9 @@ class User(AbstractUser):
 class category(models.Model):
     name = models.CharField(max_length=264)
 
+    def __str__(self):
+        return f"{self.name}"
+
 class Listings(models.Model):
 
     title = models.CharField(max_length=64)
@@ -18,12 +21,13 @@ class Listings(models.Model):
     category = models.ForeignKey(category, on_delete=models.CASCADE, related_name="add_to_category", default="")    
 
     def __str__(self):
-        return f"{self.id} Listing Title: {self.title} Description: {self.description} Current Bid: {self.currentBid}"
+        return f"{self.id},  Listing Title: {self.title}, Category: {self.category}"
     
 class bids(models.Model):
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bids', default=0)
-    currentPrice = models.ForeignKey(Listings, on_delete=models.CASCADE, related_name="bid", default=0)
+    current_listing = models.ForeignKey(Listings, on_delete=models.CASCADE, related_name="bid", default=0)
+    listing_bid = models.IntegerField(default=0)
 
 class comments(models.Model):
 
@@ -32,7 +36,7 @@ class comments(models.Model):
     allComments = models.ManyToManyField(Listings, blank=True, related_name='allComments')
 
     def __str__(self):
-        return f"Username: {self.creater} \n Comment: {self.comment}"
+        return f"Username: {self.creater} Comment: {self.comment}"
     
 
 

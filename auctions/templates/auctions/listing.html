@@ -37,7 +37,7 @@
             </div>
             
         </form>
-
+        {% if creater.id != user.id %}
             {% if currentListing in listings %}
                 <form action="{% url 'removeFromWatchlist' %}" method="post">
                     {% csrf_token %}
@@ -53,8 +53,11 @@
                     <button class="btn btn-primary">Add To Watchlist</button>
                 </form>
             {% endif %}
+        {% endif %}
+        
             
         
+        {% if creater.id != user.id %}
 
 
         <form action=" {% url 'newBid' %}" method="post">
@@ -78,8 +81,13 @@
             {% endfor %}
            
             <button class="btn btn-primary" type="submit">Submit</button>
+
+            
+                    
+            
             
         </form> 
+        {% endif %}
     {% endif %}
     <br>
 

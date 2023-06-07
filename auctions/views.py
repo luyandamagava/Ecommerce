@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
-from .models import Listings, comments, category
+from .models import Listings, comments, category, bids
 from .models import User
 
 
@@ -51,7 +51,7 @@ def register(request):
             return render(request, "auctions/register.html", {
                 "message": "Passwords must match."
             })
-        
+
 
         # Attempt to create new user
         try:
@@ -65,7 +65,7 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
-    
+
 def newListingPage(request):
     return render(request, "auctions/newListing.html")
 
@@ -74,8 +74,8 @@ def newListing(request):
 
         if request.POST["listTitle"] == '' or request.POST["listDesc"] == '' or request.POST["listBid"] == '':
             messages.error(request, 'You did not enter a value', extra_tags="all")
-            return redirect(reverse('newListingPage')) 
-            
+            return redirect(reverse('newListingPage'))
+
 
         lTitle = request.POST["listTitle"]
         lDescription = request.POST["listDesc"]
@@ -86,6 +86,7 @@ def newListing(request):
         new_category_object = ""
         categories_list = []
 
+
         for new_list in all_categories:
             categories_list.append(new_list.name)
 
@@ -95,11 +96,13 @@ def newListing(request):
         else:
             new_category_object = category(name=new_category)
             new_category_object.save()
-        
+
 
 
         newList = Listings(title=lTitle, description=lDescription, startingBid=lStartingBid, creater=userID, category=new_category_object)
         newList.save()
+        new_bid = bids(user=userID, current_listing=newList, listing_bid=lStartingBid)
+        new_bid.save()
 
         return index(request)
 
@@ -120,16 +123,16 @@ def listing(request):
             "creater": currentListing.creater,
             "category": currentListing.category,
             "comments": allComments
-            
+
         })
 
         else:
             user = User.objects.get(id=userID)
             watchListItems = user.watchlistItem.all()
-            
-            
-        
-    
+
+
+
+
             return render(request, "auctions/listing.html", {
                 "title": currentListing.title,
                 "description": currentListing.description,
@@ -140,10 +143,10 @@ def listing(request):
                 "creater": currentListing.creater,
                 "category": currentListing.category,
                 "comments": allComments
-                
+
             })
-        
-   
+
+
 
 def addToWatchList(request):
     if request.method == "POST":
@@ -181,16 +184,33 @@ def newBid(request):
         listing_id = int(request.POST["listingID"])
         listings = Listings.objects.get(id=listing_id)
         newValue = int(request.POST["enterBid"])
+        user_id = int(request.POST['userID'])
+        current_user = User.objects.get(id=user_id)
+        new_bid_object = ""
+
 
         if newValue <= listings.startingBid:
             messages.error(request, 'The value entered must be greater than current bid', extra_tags='low_bid')
             return listing(request)
-        
+
         listings.startingBid = newValue
         listings.save()
 
+
+        try:
+            new_bid_object = bids.objects.get(user=current_user, current_listing=listings)
+
+        except bids.DoesNotExist:
+            new_bid_object = bids(user=current_user, current_listing=listings, listing_bid=newValue)
+
+        else:
+            new_bid_object.listing_bid = newValue
+
+        finally:
+            new_bid_object.save()
+
         return listing(request)
-    
+
     messages.error(request, 'Please enter a value', extra_tags='no_new_bid')
     return listing(request)
 
@@ -204,7 +224,7 @@ def deleteEntry(request):
 
 def add_comment(request):
     if request.method == "POST" and request.POST["comment"] != '':
-        
+
         listing_id = int(request.POST["listingID"])
         listings = Listings.objects.get(id=listing_id)
 
@@ -217,7 +237,7 @@ def add_comment(request):
 
         listings.allComments.add(comm)
         return index(request)
-    
+
     else:
         messages.error(request, "You did not enter a comment in the comment bar", extra_tags='no_comment')
         return listing(request)
@@ -229,4 +249,13 @@ def display_categorys(request):
     return render(request, "auctions/categorys.html", {
         "categorys": categorys
     })
-    
+
+def unique_category(request, category_name):
+    current_category = category.objects.get(name=category_name)
+    category_items = current_category.add_to_category.all()
+
+    return render(request, "auctions/unique_category.html", {
+        "categroy_items": category_items,
+        "current_category":category_name
+    })
+

@@ -1,0 +1,20 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h1 class="text-center" >{{ current_category }}</h1>
+    <br>
+
+    <h4>Active listings </h4>
+    <br>
+
+    {% for item in categroy_items %}
+
+        <ul class="list-group">
+            <li class="list-group-item">{{ item.title }}</li>
+            <br>
+        </ul>
+
+    {% endfor %}
+
+    
+{% endblock %}

@@ -10,5 +10,9 @@ class ListingAdmin(admin.ModelAdmin):
 class Category_admin(admin.ModelAdmin):
     list_display = ("id", "name")
 
+class Bid_admin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'current_listing', 'listing_bid')
+
 admin.site.register(Listings, ListingAdmin)
 admin.site.register(category, Category_admin)
+admin.site.register(bids, Bid_admin)
