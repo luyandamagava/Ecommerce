@@ -1,18 +1,24 @@
 from django.contrib import admin
 from .models import *
 #Register your models here.
+@admin.register(User)
+class User_admin(admin.ModelAdmin):
+    list_display = ("username", "id")
+    
+@admin.register(Listings)
+class Listing_admin(admin.ModelAdmin):
+    list_display = ("title", "description", "id")
 
-class ListingAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "description")
-
-
-
+@admin.register(category)
 class Category_admin(admin.ModelAdmin):
-    list_display = ("id", "name")
+    list_display = ("name", "id")
 
+@admin.register(bids)
 class Bid_admin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'current_listing', 'listing_bid')
+    list_display = ('user', 'current_listing', 'listing_bid', "id")
 
-admin.site.register(Listings, ListingAdmin)
-admin.site.register(category, Category_admin)
-admin.site.register(bids, Bid_admin)
+@admin.register(comments)
+class Comment_admin(admin.ModelAdmin):
+    list_display = ( 'comment', 'creater', "id")
+
+
