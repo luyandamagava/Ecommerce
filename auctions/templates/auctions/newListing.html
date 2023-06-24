@@ -1,49 +1,49 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+    <div class="listing container-fluid">
+        {% for message in messages %}
+        {% if 'all' in message.extra_tags%}
+        <div class="container-fluid p-0">
+        <div class="alert {{ message.tags }} alert-danger" role="alert" >
+            </button>
+            <h3>You did not fill all of the form elements</h3>
+        </div>
+        </div>
+        {% endif %}
+        {% endfor %}
 
-    {% for message in messages %}
-    {% if 'all' in message.extra_tags%}
-    <div class="container-fluid p-0">
-    <div class="alert {{ message.tags }} alert-danger" role="alert" >
-        </button>
-        <h3>You did not fill all of the form elements</h3>
+        <h1>New Listings</h1>
+        <form action="{% url 'newListing' %}" method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Title</label>
+                <input class="form-control" name="listTitle" type="text"/>
+                <br>  
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea class="form-control" name="listDesc" rows="5"></textarea>
+                <br>
+            </div>
+
+            <div class="form-group">
+                <label>Starting Bid</label>
+                <input class="form-control" name="listBid" type="text"/>
+                <br>
+            </div>
+
+            <div class="form-group">
+                <label>Category</label>
+                <input class="form-control" name="category" type="text"/>
+                <br>
+            </div>
+            
+            <button class="btn btn-primary btn-block" type="submit">Submit</button>
+            <input type="hidden" name="UserID" value="{{ user.id }}"/>
+
+        </form>
     </div>
-    </div>
-    {% endif %}
-    {% endfor %}
-
-    <h1>New Listings</h1>
-    <form action="{% url 'newListing' %}" method="post">
-        {% csrf_token %}
-
-        <div class="form-group">
-            <label>Title</label>
-            <input class="form-control" name="listTitle" type="text"/>
-            <br>  
-        </div>
-
-        <div class="form-group">
-            <label>Description</label>
-            <textarea class="form-control" name="listDesc" rows="5"></textarea>
-            <br>
-        </div>
-
-        <div class="form-group">
-            <label>Starting Bid</label>
-            <input class="form-control" name="listBid" type="text"/>
-            <br>
-        </div>
-
-        <div class="form-group">
-            <label>Category</label>
-            <input class="form-control" name="category" type="text"/>
-            <br>
-        </div>
-        
-        <button class="btn btn-primary" type="submit">Submit</button>
-        <input type="hidden" name="UserID" value="{{ user.id }}"/>
-
-    </form>
-
 {% endblock %}

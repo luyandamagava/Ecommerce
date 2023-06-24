@@ -1,96 +1,91 @@
 {% extends 'auctions/layout.html' %}
 
 {% block body %}
+    <div class="listing container-fluid">
+        <h1 class="text-center">{{ title.upper }}</h1>
+
+        <dl>
+            <dt>Listed by :</dt>
+            <dd>{{ creater.username.upper }}</dd>
+            <dt>Category :</dt>
+            <dd>{{ category.name }}</dd>
+        </dl>
 
 
 
-
-    <h1 class="text-center">{{ title }}</h1>
-
-    <dl>
-        <dt>Listed by :</dt>
-        <dd>{{ creater }}</dd>
-        <dt>Category :</dt>
-        <dd>{{ category.name }}</dd>
-    </dl>
+        <ul class="list-group">
+            <li class="list-group-item"><h5>Description: </h5>{{ description }}</li>
+            <li class="list-group-item"><h4>Current Bid - ${{ startingBid }}</h4></li>
+        </ul>
 
 
 
-    <ul class="list-group">
-        <li class="list-group-item"><h5>Description: </h5>{{ description }}</li>
-        <li class="list-group-item"><h4>Current Bid - ${{ startingBid }}</h4></li>
-    </ul>
+        {% if user.is_authenticated %}
 
+            <br>
+            <form action="{% url 'deleteEntry' %}" method="post">
+                {% csrf_token %}
+                <div class="col-md-12 text-right">
+                    <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
+                    <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
+                    {% if user.is_authenticated and user.id == creater.id %}
+                        <button class="btn btn-danger btn-block"> Delete Listing </button>
+                    {% endif %}
+                </div>
+                
+            </form>
+            {% if creater.id != user.id %}
+                {% if currentListing in listings %}
+                    <form action="{% url 'removeFromWatchlist' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
+                        <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
+                        <button class="btn btn-primary btn-block">Remove from Watchlist</button>
+                    </form>
+                {% else %}
+                    <form action="{% url 'addToWatchList' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
+                        <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
+                        <button class="btn btn-primary btn-block">Add To Watchlist</button>
+                    </form>
+                {% endif %}
+            {% endif %}
+            
+                
+            
+            {% if creater.id != user.id %}
+                <form action=" {% url 'newBid' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <br/>
+                        <label><h5>Enter Bid:</h5></label>
+                        <input type="hidden" id="listingID" name="listingID" value="{{ ID }}">
+                        <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
+                        <input class="form-control" name="enterBid" type="text" placeholder="{{ startingBid }}"/>
+                    </div>
+                    <button class="btn btn-primary btn-block" type="submit">Submit</button>  
+                </form> 
+                    {% for message in messages %}
+                        {% if 'no_new_bid' or 'low_bid' in message.extra_tags %}
+                        <br>
+                            <div class="container-fluid p-0">
+                            <div class="alert {{ message.tags }} alert-danger" role="alert" >
+                                <h3>{{ message }}</h3>
+                            </div>
+                            </div>
+                        {% endif %}
+                    
+                    {% endfor %}
+            {% endif %}
 
-
-    {% if user.is_authenticated %}
+        {% endif %}
         <br>
 
-        <form action="{% url 'deleteEntry' %}" method="post">
-            {% csrf_token %}
-            <div class="col-md-12 text-right">
-                <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
-                <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
-                {% if user.is_authenticated and user.id == creater.id %}
-                    <button class="btn btn-danger float-right"> Delete Listing </button>
-                {% endif %}
-            </div>
-            
-        </form>
-        {% if creater.id != user.id %}
-            {% if currentListing in listings %}
-                <form action="{% url 'removeFromWatchlist' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
-                    <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
-                    <button class="btn btn-primary">Remove from Watchlist</button>
-                </form>
-            {% else %}
-                <form action="{% url 'addToWatchList' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
-                    <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
-                    <button class="btn btn-primary">Add To Watchlist</button>
-                </form>
-            {% endif %}
-        {% endif %}
         
-            
         
-        {% if creater.id != user.id %}
-
-
-        <form action=" {% url 'newBid' %}" method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <br/>
-                <label><h5>Enter Bid:</h5></label>
-                <input type="hidden" id="listingID" name="listingID" value="{{ ID }}">
-                <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
-                <input class="form-control" name="enterBid" type="text" placeholder="{{ startingBid }}"/>
-            </div>
-            <button class="btn btn-primary" type="submit">Submit</button>  
-            
-            {% for message in messages %}
-                {% if 'no_new_bid' or 'low_bid' in message.extra_tags %}
-                <br>
-                    <div class="container-fluid p-0">
-                    <div class="alert {{ message.tags }} alert-danger" role="alert" >
-                        <h3>{{ message }}</h3>
-                    </div>
-                    </div>
-                {% endif %}
-               
-            {% endfor %}
-        </form> 
-        {% endif %}
-    {% endif %}
-    <br>
-
-    
-    
-    
-    <br>
+        
+        <br>
         {% if user.is_authenticated %}
             <form action="{% url 'add_comment' %}" method="post">
                 {% csrf_token %}
@@ -100,30 +95,29 @@
                     <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
                     <input type="hidden" id="listingID" name="listingID" value="{{ ID }}">  
                 </div>
-                <button class="btn btn-primary lrg" type="submit">Submit</button>
+                <button class="btn btn-primary btn-block" type="submit">Submit</button>
             </form>
 
             {% for message in messages %}
                 {% if 'no_comment' in message.extra_tags %}
-            <br>
+                    <br>
                     <div class="container-fluid p-0">
-                    <div class="alert {{ message.tags }} alert-danger" role="alert" >
-                        <h3>{{ message }}</h3>
-                    </div>
+                        <div class="alert {{ message.tags }} alert-danger" role="alert" >
+                            <h3>{{ message }}</h3>
+                        </div>
                     </div>
                 {% endif %}
             {% endfor %}
             <br>
         {% endif %}
 
-        <ul class="list-group">
+        <dl>
             <h3>Comments</h3>
             {% for comment in comments %}
-                <li class="list-group-item">{{ comment.creater }} - {{ comment.comment }}<li>
-
+                <dd class="list-group-item">{{ comment.creater.username.upper }} - {{ comment.comment }}</dd>
             {% empty%}
-                <li><h5>There are no comments</h5></li>
+                <dd><h5>There are no comments</h5></dd>
             {% endfor %}
         </ul>
-
+    </div>
 {% endblock  %}
