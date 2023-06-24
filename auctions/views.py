@@ -104,7 +104,7 @@ def newListing(request):
         new_bid = bids(user=userID, current_listing=newList, listing_bid=lStartingBid)
         new_bid.save()
 
-        return index(request)
+        return HttpResponseRedirect(reverse("index"))
 
 def listing(request):
     if request.method == "POST":
@@ -130,9 +130,6 @@ def listing(request):
             user = User.objects.get(id=userID)
             watchListItems = user.watchlistItem.all()
 
-
-
-
             return render(request, "auctions/listing.html", {
                 "title": currentListing.title,
                 "description": currentListing.description,
@@ -153,22 +150,48 @@ def addToWatchList(request):
 
         listing_id = int(request.POST["listingID"])
         userID = int(request.POST["userID"])
-        listings = Listings.objects.get(id=listing_id)
+        currentListing = Listings.objects.get(id=listing_id)
         user = User.objects.get(id=userID)
-        listings.watchlist.add(user)
+        currentListing.watchlist.add(user)
+        watchListItems = user.watchlistItem.all()
+        allComments = currentListing.allComments.all()
 
-        return listing(request)
+        return render(request, "auctions/listing.html", {
+                "title": currentListing.title,
+                "description": currentListing.description,
+                "startingBid": currentListing.startingBid,
+                "ID": listing_id,
+                "listings": watchListItems,
+                "currentListing": currentListing,
+                "creater": currentListing.creater,
+                "category": currentListing.category,
+                "comments": allComments
+
+            })
 
 def removeFromWatchlist(request):
     if request.method == "POST":
 
         listing_id = int(request.POST["listingID"])
         userID = int(request.POST["userID"])
-        listings = Listings.objects.get(id=listing_id)
+        currentListing = Listings.objects.get(id=listing_id)
         user = User.objects.get(id=userID)
-        listings.watchlist.remove(user)
+        currentListing.watchlist.remove(user)
+        watchListItems = user.watchlistItem.all()
+        allComments = currentListing.allComments.all()
 
-        return listing(request)
+        return render(request, "auctions/listing.html", {
+                "title": currentListing.title,
+                "description": currentListing.description,
+                "startingBid": currentListing.startingBid,
+                "ID": listing_id,
+                "listings": watchListItems,
+                "currentListing": currentListing,
+                "creater": currentListing.creater,
+                "category": currentListing.category,
+                "comments": allComments
+
+            })
 
 
 def viewWatchList(request, userID):
@@ -183,32 +206,33 @@ def newBid(request):
     if request.method == "POST" and request.POST["enterBid"]!= '':
         listing_id = int(request.POST["listingID"])
         listings = Listings.objects.get(id=listing_id)
-        newValue = int(request.POST["enterBid"])
+        new_value = int(request.POST["enterBid"])
         user_id = int(request.POST['userID'])
-        current_user = User.objects.get(id=user_id)
+        user = User.objects.get(id=user_id)
         new_bid_object = ""
+        
 
 
-        if newValue <= listings.startingBid:
+        if new_value <= listings.startingBid:
             messages.error(request, 'The value entered must be greater than current bid', extra_tags='low_bid')
             return listing(request)
 
-        listings.startingBid = newValue
+        listings.startingBid = new_value
         listings.save()
 
 
         try:
-            new_bid_object = bids.objects.get(user=current_user, current_listing=listings)
+            new_bid_object = bids.objects.get(user=user, current_listing=listings)
 
         except bids.DoesNotExist:
-            new_bid_object = bids(user=current_user, current_listing=listings, listing_bid=newValue)
+            new_bid_object = bids(user=user, current_listing=listings, listing_bid=new_value)
 
         else:
-            new_bid_object.listing_bid = newValue
+            new_bid_object.listing_bid = new_value
 
         finally:
             new_bid_object.save()
-
+            
         return listing(request)
 
     messages.error(request, 'Please enter a value', extra_tags='no_new_bid')
@@ -220,7 +244,7 @@ def deleteEntry(request):
     listings = Listings.objects.get(id=listing_id)
     listings.delete()
 
-    return index(request)
+    return HttpResponseRedirect(reverse("index"))
 
 def add_comment(request):
     if request.method == "POST" and request.POST["comment"] != '':
@@ -236,7 +260,7 @@ def add_comment(request):
         comm.save()
 
         listings.allComments.add(comm)
-        return index(request)
+        return HttpResponseRedirect(reverse("index"))
 
     else:
         messages.error(request, "You did not enter a comment in the comment bar", extra_tags='no_comment')

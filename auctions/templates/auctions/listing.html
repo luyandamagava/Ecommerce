@@ -69,8 +69,11 @@
                 <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
                 <input class="form-control" name="enterBid" type="text" placeholder="{{ startingBid }}"/>
             </div>
+            <button class="btn btn-primary" type="submit">Submit</button>  
+            
             {% for message in messages %}
                 {% if 'no_new_bid' or 'low_bid' in message.extra_tags %}
+                <br>
                     <div class="container-fluid p-0">
                     <div class="alert {{ message.tags }} alert-danger" role="alert" >
                         <h3>{{ message }}</h3>
@@ -79,13 +82,6 @@
                 {% endif %}
                
             {% endfor %}
-           
-            <button class="btn btn-primary" type="submit">Submit</button>
-
-            
-                    
-            
-            
         </form> 
         {% endif %}
     {% endif %}
@@ -108,7 +104,7 @@
             </form>
 
             {% for message in messages %}
-            {% if 'no_comment' in message.extra_tags %}
+                {% if 'no_comment' in message.extra_tags %}
             <br>
                     <div class="container-fluid p-0">
                     <div class="alert {{ message.tags }} alert-danger" role="alert" >

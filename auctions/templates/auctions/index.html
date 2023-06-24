@@ -3,29 +3,42 @@
 {% block body %}
     <h2>Active Listings</h2>
     
-            <ol>
-                {% for listing  in listings %}
-                <form action="{% url 'listing' %}" method="post">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <li><h3>{{ listing.title }}<h3></li>
-                        <ul>
-                            <li><h5>Description:</h5> {{ listing.description }}</li>
-                            <br>
-                            <li><h5>Current Bid:</h5> ${{ listing.startingBid }}</li>
-                            <br>
-                        </ul>
 
-                        <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
-                        <input type="hidden" id="listingID" name="listingID" value="{{ listing.id }}"> 
-                        <button class="btn btn-primary">Visit listing</button>
-                    </div>
-                </form>
-                {% endfor %}
-            </ol>
+    {% for listing  in listings %}
+        <br>
+        <div class="container-fluid border border-secondary rounded shadow-lg">
+            <br>
+            <div class="row">
+                <div class="col-lg">
+                    <h3>Listing Name:</h3> <h5>{{ listing.title.upper }}</h5>
+                </div>
+                    <br>
+                <div class="col-lg">
+                        <h5>Description:</h5> {{ listing.description }}
+                </div>
+                    <br>
+                <div class="col-lg">
+                        <h5>Current Bid:</h5> ${{ listing.startingBid }}
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-lg">
+                    <img></img>
+                </div>
+            </div>   
+            
+            <br>
+            <form action="{% url 'listing' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
+                    <input type="hidden" id="listingID" name="listingID" value="{{ listing.id }}"> 
+                    <button class="btn btn-primary btn-block">Visit listing</button>
+                </div>
+            </form>
+            <br>
+        </div>
         
-
-    
-
-
+    {% endfor %}
 {% endblock %}
