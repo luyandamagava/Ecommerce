@@ -3,21 +3,23 @@
 {% block body %}
     <h2 class="text-center" >{{ current_category }}</h2>
     
+    <div class="container-fluid rounded shadow-sm">
+        {% if categroy_items%}
+            <br>
+            <h4>Active listings </h4>
+            <br>
+            {% for item in categroy_items %}
+                <ul class="list-group">
+                    <li class="list-group-item">{{ item.title }}</li>
+                    <br>
+                </ul>
+            {% endfor %}
 
-    {% if categroy_items%}
+        {% else %}
+            <h3>There are no items in this category</h3>
+        {% endif %}
         <br>
-        <h4>Active listings </h4>
-        <br>
-        {% for item in categroy_items %}
-            <ul class="list-group">
-                <li class="list-group-item">{{ item.title }}</li>
-                <br>
-            </ul>
-        {% endfor %}
-
-    {% else %}
-        <h3>There are no items in this category</h3>
-    {% endif %}
+    </div>
 
 
 

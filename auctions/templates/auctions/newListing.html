@@ -2,14 +2,14 @@
 
 {% block body %}
     <h2>New Listings</h2>
-        <div class="container-fluid">
+    <br>
+        <div class="container-fluid rounded shadow-sm">
             {% for message in messages %}
             {% if 'all' in message.extra_tags%}
             <div class="container-fluid p-0">
-            <div class="alert {{ message.tags }} alert-danger" role="alert" >
-                </button>
-                <h3>You did not fill all of the form elements</h3>
-            </div>
+                <div class="alert {{ message.tags }} alert-danger" role="alert" >
+                    <h3>You did not fill all of the form elements</h3>
+                </div>
             </div>
             {% endif %}
             {% endfor %}
@@ -42,9 +42,10 @@
                     <br>
                 </div>
                 
-                <button class="btn btn-primary btn-block" type="submit">Submit</button>
+                <button class="btn btn-primary btn-block rounded shadow-sm" type="submit">Submit</button>
                 <input type="hidden" name="UserID" value="{{ user.id }}"/>
 
             </form>
+            <br>
         </div>
 {% endblock %}

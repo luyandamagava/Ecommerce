@@ -1,22 +1,23 @@
 {% extends 'auctions/layout.html' %}
 
 {% block body %}
-<div class="container-fluid">
-    <dl class="list-group">
-        {% for item in watchlistItems %}
-        <form action="{% url 'listing' %}" method="post">
-            {% csrf_token %}
-            <h1>{{ item.title }}</h1>
-            <dd class="list-group-item"><h5>Description: </h5>{{ item.description }}</dd>
-            <dd class="list-group-item"><h4>Current Bid - ${{ item.startingBid }}</h4></dd>
-            <br>
-            <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
-            <input type="hidden" id="listingID" name="listingID" value="{{ item.id }}"> 
-            <button class="btn btn-primary">Visit listing</button>
-            {% empty %}
-                <dd><h1>Your watchlist is empty </h1></dd>
-            {% endfor %}
-        </form>
-    </dl>
-</div>
+    <div class="container-fluid rounded shadow-sm">
+        <dl class="list-group">
+            {% for item in watchlistItems %}
+            <form action="{% url 'listing' %}" method="post">
+                {% csrf_token %}
+                <h1>{{ item.title }}</h1>
+                <dd class="list-group-item"><h5>Description: </h5>{{ item.description }}</dd>
+                <dd class="list-group-item"><h4>Current Bid - ${{ item.startingBid }}</h4></dd>
+                <br>
+                <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
+                <input type="hidden" id="listingID" name="listingID" value="{{ item.id }}"> 
+                <button class="btn btn-primary rounded shadow-sm">Visit listing</button>
+                {% empty %}
+                    <dd><h1>Your watchlist is empty </h1></dd>
+                {% endfor %}
+            </form>
+        </dl>
+        <br>
+    </div>
 {% endblock body %}
