@@ -1,20 +1,25 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h1 class="text-center" >{{ current_category }}</h1>
-    <br>
+    <h2 class="text-center" >{{ current_category }}</h2>
+    
 
-    <h4>Active listings </h4>
-    <br>
+    {% if categroy_items%}
+        <br>
+        <h4>Active listings </h4>
+        <br>
+        {% for item in categroy_items %}
+            <ul class="list-group">
+                <li class="list-group-item">{{ item.title }}</li>
+                <br>
+            </ul>
+        {% endfor %}
 
-    {% for item in categroy_items %}
+    {% else %}
+        <h3>There are no items in this category</h3>
+    {% endif %}
 
-        <ul class="list-group">
-            <li class="list-group-item">{{ item.title }}</li>
-            <br>
-        </ul>
 
-    {% endfor %}
 
     
 {% endblock %}

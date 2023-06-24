@@ -1,13 +1,14 @@
 {% extends 'auctions/layout.html' %}
 
 {% block body %}
-    <div class="listing container-fluid">
-        <h1 class="text-center">{{ title.upper }}</h1>
+    <div class="listing container-fluid rounded shadow-lg">
+        <br>
+        <h2 class="text-center">{{ title.upper }}</h2>
 
         <dl>
             <dt>Listed by :</dt>
             <dd>{{ creater.username.upper }}</dd>
-            <dt>Category :</dt>
+            <dt>Category:</dt>
             <dd>{{ category.name }}</dd>
         </dl>
 
@@ -23,31 +24,44 @@
         {% if user.is_authenticated %}
 
             <br>
-            <form action="{% url 'deleteEntry' %}" method="post">
-                {% csrf_token %}
-                <div class="col-md-12 text-right">
-                    <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
-                    <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
-                    {% if user.is_authenticated and user.id == creater.id %}
-                        <button class="btn btn-danger btn-block"> Delete Listing </button>
-                    {% endif %}
+            <div class="row">
+                <div class="col-6 text-left">
+                    <form action="{% url 'deleteEntry' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
+                        <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
+                        {% if user.is_authenticated and user.id == creater.id %}
+                            <button class="btn btn-block btn-danger"> Delete Listing </button>
+                        {% endif %}   
+                    </form>
                 </div>
-                
-            </form>
+                <div class="col-6 text-right">
+                    <form action="{% url 'deleteEntry' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
+                        <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
+                        {% if user.is_authenticated and user.id == creater.id %}
+                            <button class="btn btn-block btn-warning"> Close Listing </button>
+                        {% endif %}   
+                    </form>
+                </div>
+            </div>
+
+
             {% if creater.id != user.id %}
                 {% if currentListing in listings %}
                     <form action="{% url 'removeFromWatchlist' %}" method="post">
                         {% csrf_token %}
                         <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
                         <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
-                        <button class="btn btn-primary btn-block">Remove from Watchlist</button>
+                        <button class="btn btn-warning btn-block">Remove from Watchlist</button>
                     </form>
                 {% else %}
                     <form action="{% url 'addToWatchList' %}" method="post">
                         {% csrf_token %}
                         <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
                         <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
-                        <button class="btn btn-primary btn-block">Add To Watchlist</button>
+                        <button class="btn btn-success btn-block">Add To Watchlist</button>
                     </form>
                 {% endif %}
             {% endif %}
@@ -62,7 +76,7 @@
                         <label><h5>Enter Bid:</h5></label>
                         <input type="hidden" id="listingID" name="listingID" value="{{ ID }}">
                         <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
-                        <input class="form-control" name="enterBid" type="text" placeholder="{{ startingBid }}"/>
+                        <input class="form-control" name="enterBid" type="text" placeholder="{{ startingBid }} bid by"/>
                     </div>
                     <button class="btn btn-primary btn-block" type="submit">Submit</button>  
                 </form> 
@@ -86,7 +100,7 @@
         
         
         <br>
-        {% if user.is_authenticated %}
+        {% if user.is_authenticated and creater.id != user.id%}
             <form action="{% url 'add_comment' %}" method="post">
                 {% csrf_token %}
                 <h2 class="text-center"> Add Commment </h2>
@@ -119,5 +133,6 @@
                 <dd><h5>There are no comments</h5></dd>
             {% endfor %}
         </ul>
+        <br>
     </div>
 {% endblock  %}

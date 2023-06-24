@@ -2,11 +2,9 @@
 
 {% block body %}
     <h2>Active Listings</h2>
-    
-
-    {% for listing  in listings %}
+    {% for listing in listings %}
         <br>
-        <div class="container-fluid border border-secondary rounded shadow-lg">
+        <div class="container-fluid rounded shadow-lg">
             <br>
             <div class="row">
                 <div class="col-lg">
@@ -39,6 +37,5 @@
             </form>
             <br>
         </div>
-        
     {% endfor %}
 {% endblock %}

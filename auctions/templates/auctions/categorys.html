@@ -2,14 +2,14 @@
 
 {% block body %}
     <h2>Categories</h2>
-    {% for category in categorys %}
+    <div class="container-fluid">
+        {% for category in categorys %}
 
-        <ul class="list-group">
-            <li class="list-group-item"><a class="nav-link" href="{% url 'unique_category' category.name %}">{{ category.name.upper }}</a></li>
-            <br>
-        </ul>
+            <ul class="list-group">
+                <li class="list-group-item"><a class="nav-link" href="{% url 'unique_category' category.name %}">{{ category.name.upper }}</a></li>
+                <br>
+            </ul>
 
-    {% endfor %}
-
-    
+        {% endfor %}
+        </div> 
 {% endblock %}
