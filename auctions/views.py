@@ -112,6 +112,7 @@ def listing(request):
         userID = request.POST["userID"]
         currentListing = Listings.objects.get(id=listing_id)
         allComments = currentListing.allComments.all()
+        highest_bidder = bids.objects.get(listing_bid=currentListing.startingBid)
 
         if userID == 'None':
             return render(request, "auctions/listing.html", {
@@ -122,7 +123,8 @@ def listing(request):
             "currentListing": currentListing,
             "creater": currentListing.creater,
             "category": currentListing.category,
-            "comments": allComments
+            "comments": allComments,
+            "bidder": highest_bidder
 
         })
 
@@ -139,7 +141,8 @@ def listing(request):
                 "currentListing": currentListing,
                 "creater": currentListing.creater,
                 "category": currentListing.category,
-                "comments": allComments
+                "comments": allComments,
+                "bidder": highest_bidder
 
             })
 
@@ -179,6 +182,7 @@ def removeFromWatchlist(request):
         currentListing.watchlist.remove(user)
         watchListItems = user.watchlistItem.all()
         allComments = currentListing.allComments.all()
+        
 
         return render(request, "auctions/listing.html", {
                 "title": currentListing.title,
@@ -235,7 +239,7 @@ def newBid(request):
             
         return listing(request)
 
-    messages.error(request, 'Please enter a value', extra_tags='no_new_bid')
+    messages.error(request, 'You did not enter a value in the bids', extra_tags='no_new_bid')
     return listing(request)
 
 def deleteEntry(request):
@@ -283,3 +287,15 @@ def unique_category(request, category_name):
         "current_category":category_name
     })
 
+
+def close_entry(request):
+
+    listing_id = int(request.POST["listingID"])
+    listings = Listings.objects.get(id=listing_id)
+    bidder = bids.objects.get(listing_bid=listings.startingBid)
+
+    messages.success(request, f"Thank you! {bidder.user.username.upper()} you won the {listings.title.upper()}", extra_tags='no_comment')
+    listings.delete()
+
+
+    return HttpResponseRedirect(reverse("index"))

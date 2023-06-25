@@ -1,6 +1,16 @@
 {% extends 'auctions/layout.html' %}
 
 {% block body %}
+
+    {% for message in messages %}
+            <br>
+            <div class="container-fluid p-0">
+                <div class="alert {{ message.tags }} alert-danger" role="alert" >
+                    <h3>{{ message }}</h3>
+                </div>
+            </div>
+    {% endfor %}
+
     <div class="listing container-fluid rounded shadow-sm">
         <br>
         <h2 class="text-center">{{ title.upper }}</h2>
@@ -16,7 +26,11 @@
 
         <ul class="list-group">
             <li class="list-group-item"><h5>Description: </h5>{{ description }}</li>
-            <li class="list-group-item"><h4>Current Bid - ${{ startingBid }}</h4></li>
+            {% if bidder.user.id == creater.id %}
+                <li class="list-group-item"><h4>Current Bid - ${{ startingBid }} - This is the starting bid</h4></li>
+            {% else %}
+                <li class="list-group-item"><h4>Current Bid - ${{ startingBid }} - by {{ bidder.user.username.upper }}</h4></li>
+            {% endif %}
         </ul>
 
 
@@ -36,7 +50,7 @@
                     </form>
                 </div>
                 <div class="col-6 text-right">
-                    <form action="{% url 'deleteEntry' %}" method="post">
+                    <form action="{% url 'close_entry' %}" method="post">
                         {% csrf_token %}
                         <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
                         <input type="hidden" id="listingID" name="listingID" value="{{ ID }}"> 
@@ -75,21 +89,10 @@
                         <label><h5>Enter Bid:</h5></label>
                         <input type="hidden" id="listingID" name="listingID" value="{{ ID }}">
                         <input type="hidden" id="userID" name="userID" value="{{ user.id }}">
-                        <input class="form-control" name="enterBid" type="text" placeholder="{{ startingBid }} bid by"/>
+                        <input class="form-control" name="enterBid" type="text" placeholder="{{ startingBid }}"/>
                     </div>
                     <button class="btn btn-primary btn-block rounded shadow-sm" type="submit">Submit</button>  
                 </form> 
-                    {% for message in messages %}
-                        {% if 'no_new_bid' or 'low_bid' in message.extra_tags %}
-                        <br>
-                            <div class="container-fluid p-0">
-                            <div class="alert {{ message.tags }} alert-danger" role="alert" >
-                                <h3>{{ message }}</h3>
-                            </div>
-                            </div>
-                        {% endif %}
-                    
-                    {% endfor %}
             {% endif %}
 
         {% endif %}
@@ -110,17 +113,6 @@
                 </div>
                 <button class="btn btn-primary btn-block rounded shadow-sm" type="submit">Submit</button>
             </form>
-
-            {% for message in messages %}
-                {% if 'no_comment' in message.extra_tags %}
-                    <br>
-                    <div class="container-fluid p-0">
-                        <div class="alert {{ message.tags }} alert-danger" role="alert" >
-                            <h3>{{ message }}</h3>
-                        </div>
-                    </div>
-                {% endif %}
-            {% endfor %}
             <br>
         {% endif %}
 

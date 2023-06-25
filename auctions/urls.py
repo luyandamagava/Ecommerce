@@ -17,5 +17,6 @@ urlpatterns = [
     path("deleteEntry", views.deleteEntry, name="deleteEntry"),
     path("add_comment", views.add_comment, name="add_comment"),
     path("categorys", views.display_categorys, name="categorys"),
-    path("<category_name>/uinque_category", views.unique_category, name="unique_category")
+    path("<category_name>/uinque_category", views.unique_category, name="unique_category"),
+    path("close_entry", views.close_entry, name="close_entry")
 ]

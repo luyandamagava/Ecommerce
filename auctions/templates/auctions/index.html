@@ -1,6 +1,16 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+
+    {% for message in messages %}
+        <br>
+        <div class="container-fluid p-0">
+            <div class="alert {{ message.tags }} alert-success" role="alert" >
+                <h3>{{ message }}</h3>
+            </div>
+        </div>
+    {% endfor %}
+
     <h2>Active Listings</h2>
     {% for listing in listings %}
         <br>
